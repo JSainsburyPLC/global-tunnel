@@ -76,6 +76,11 @@ globalTunnel.initialize = function(conf) {
   }
   conf = _.clone(conf);
 
+  if (process.env['no_proxy']) {
+    var no_proxy = process.env['no_proxy'];
+    conf.no_proxy = no_proxy.split(',');
+  }
+
   if (!conf.host) {
     throw new Error('upstream proxy host is required');
   }
@@ -139,7 +144,7 @@ globalTunnel._makeAgent = function(conf, innerProtocol, useCONNECT) {
   innerProtocol = innerProtocol + ':';
 
   var opts = {
-    proxy: _.pick(conf, 'host','port','protocol','localAddress'),
+    proxy: _.pick(conf, 'host','port','protocol','localAddress', 'no_proxy'),
     maxSockets: conf.sockets
   };
   opts.proxy.innerProtocol = innerProtocol;
